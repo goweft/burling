@@ -1,0 +1,18 @@
+# Binaries
+/burling
+/cmd/burling/burling
+*.exe
+*.test
+*.out
+
+# Coverage
+*.cover
+coverage.txt
+coverage.html
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
