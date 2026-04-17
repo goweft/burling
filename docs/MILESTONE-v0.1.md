@@ -117,18 +117,18 @@ Follows `docs/conformance-matrix.md` order, narrowed to v0.1 scope:
 
 ## Done criteria checklist
 
-- [ ] `internal/identity` implemented, 9 checks tested, ≥80% coverage
+- [x] `internal/identity` implemented, 9 checks tested, ≥80% coverage
       (jcs.go ≥70% with documented exemption)
-- [ ] `internal/compact` implemented, 9 checks tested, ≥80% coverage
-- [ ] Six stub packages return INFO findings without panicking
-- [ ] All four CLI commands dispatch correctly
-- [ ] `--format json|text` and `--strict` honored across CLI
-- [ ] 36+ fixture cases passing
-- [ ] `go test ./... -race -cover` green
-- [ ] `golangci-lint run` green
-- [ ] `docs/CONFORMANCE.md` exists and accurate
-- [ ] README declares 18 of 45 status
-- [ ] Worked example in README runs against committed fixture
+- [x] `internal/compact` implemented, 9 checks tested, ≥80% coverage
+- [x] Six stub packages return INFO findings without panicking
+- [x] All four CLI commands dispatch correctly
+- [x] `--format json|text` and `--strict` honored across CLI
+- [x] 36+ fixture cases passing
+- [x] `go test ./... -race -cover` green
+- [x] `golangci-lint run` green
+- [x] `docs/CONFORMANCE.md` exists and accurate
+- [x] README declares 18 of 43 status
+- [x] Worked example in README runs against committed fixture
 
 When every box is checked, v0.1 is shipped. Tag `v0.1.0`. Move to v0.2
 planning.
