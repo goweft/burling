@@ -1,0 +1,27 @@
+# golangci-lint configuration for burling.
+#
+# Kept intentionally minimal: standard built-in linters, no aggressive
+# style enforcement. Adjust as the project grows, but start with the
+# defaults so early contributors aren't fighting the linter.
+
+run:
+  timeout: 3m
+
+linters:
+  disable-all: true
+  enable:
+    - errcheck        # unchecked errors
+    - gosimple        # code-simplification
+    - govet           # suspicious constructs
+    - ineffassign     # ineffectual assignments
+    - staticcheck     # static analysis
+    - unused          # unused code
+    - gofmt           # formatting
+    - misspell        # common misspellings
+
+issues:
+  # Don't require package-level comments on every test file.
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck

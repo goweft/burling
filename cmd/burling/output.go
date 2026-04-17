@@ -46,7 +46,7 @@ func renderJSON(w *os.File, r *report.Report) error {
 //	ERROR   [ID-06] §2.3  document_signature did not verify ...
 //	WARNING [CM-08] §3.1  ttl 2h exceeds standard cap of 1h
 //	INFO    [CH-00] §3.2  chained-mode validation deferred to v0.2
-//	
+//
 //	Summary: 1 ERROR, 1 WARNING, 1 INFO — FAIL
 //
 // Findings are sorted by severity (ERROR first, then WARNING, then

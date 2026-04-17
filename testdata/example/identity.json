@@ -1,0 +1,15 @@
+{
+  "aip": "1.0",
+  "document_signature": "H0GmfHNyq-MlolVZL-tfOqLv_P7SpEPU-H0qHlmrm1PIMhiJ-UhX-d98MS1qoh3veFUrQKf_vE9jINrRM19XDA",
+  "expires": "2026-04-23T22:19:40-07:00",
+  "id": "aip:web:example.com/issuer-alpha",
+  "public_keys": [
+    {
+      "alg": "ed25519",
+      "key": "V9BoYewFp8EJEPVMEesg7Rv0E-pFS0TutTKGjuhibMM",
+      "kid": "k1",
+      "valid_from": "2026-04-16T21:19:40-07:00",
+      "valid_until": "2027-04-16T22:19:40-07:00"
+    }
+  ]
+}

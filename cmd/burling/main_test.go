@@ -459,4 +459,3 @@ func TestRenderText_SortsSeverityDescending(t *testing.T) {
 		t.Errorf("INFO appeared before ERROR; ordering wrong. stdout=%q", stdout)
 	}
 }
-

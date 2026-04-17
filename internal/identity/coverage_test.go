@@ -162,7 +162,7 @@ func TestHTTPResolver_Resolve_RejectsKeyForm(t *testing.T) {
 func TestHTTPResolver_Resolve_TransportError(t *testing.T) {
 	h := &HTTPResolver{
 		Client: &http.Client{
-			Timeout: 100 * time.Millisecond,
+			Timeout:   100 * time.Millisecond,
 			Transport: errTransport{},
 		},
 	}

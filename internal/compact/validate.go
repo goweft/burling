@@ -326,4 +326,3 @@ func payloadContains(p Payload, claim string) bool {
 	_, ok := p.Raw[claim]
 	return ok
 }
-
