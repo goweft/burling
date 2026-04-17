@@ -108,7 +108,7 @@ This is the core security property of the whole protocol. If burling does nothin
 2. `internal/identity` — JCS + Ed25519. Smallest self-contained module.
 3. `internal/compact` — JWT parse + Ed25519 verify + claim extraction.
 4. `internal/scope` — Attenuation across all four dimensions. **Spend time here.**
-5. `internal/depth`, `internal/context`, `internal/completion` — Structural checks.
+5. `internal/depth`, `internal/delegation`, `internal/completion` — Structural checks.
 6. `internal/mcpbind` — Transport-level, lighter weight.
 7. `internal/chained` — STUB ONLY for v0.1.
 

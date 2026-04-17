@@ -238,3 +238,21 @@ func TestMintToken_IssuerLooksValid(t *testing.T) {
 		t.Error("minted token has no dots")
 	}
 }
+
+// TestMintToken_IssuerDocPassesIdentityValidate is a cross-package
+// regression guard: the issuer identity document that compact fixtures
+// produce must also be valid per identity.Validate. If the two
+// packages ever disagree on what a well-formed identity document
+// looks like, this test catches it before the silent divergence
+// ships.
+func TestMintToken_IssuerDocPassesIdentityValidate(t *testing.T) {
+	_, _, issDoc := mintToken(t, nil, nil)
+	r := identity.Validate(context.Background(), issDoc, identity.Options{
+		Now: fixedNow,
+		// No Resolver: ID-08 emits INFO for web-form IDs, which is
+		// expected and not an error condition.
+	})
+	if r.HasErrors() {
+		t.Errorf("compact-minted issuer doc fails identity.Validate: %+v", r.Findings)
+	}
+}
