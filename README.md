@@ -12,12 +12,15 @@
   <a href="#architecture">Architecture</a> ·
   <a href="#install">Install</a> ·
   <a href="docs/CONFORMANCE.md">Conformance</a> ·
+  <a href="docs/EXPLAINER.md">Explainer</a> ·
   <a href="docs/spec-ambiguities.md">Ambiguities</a>
 </p>
 
 ---
 
 The name follows the [goweft](https://github.com/goweft) textile convention: *burling* is the process of inspecting finished cloth for defects and removing them. burling inspects finished IBCTs for protocol defects.
+
+> **New to agent identity?** Start with the [plain-language explainer](docs/EXPLAINER.md) — three diagrams and ~600 words that walk through why this problem exists and what AIP does about it.
 
 <h2 id="status">Status</h2>
 
@@ -142,6 +145,7 @@ $ burling lint --format json testdata/example/token.jwt | jq '.findings[] | {che
 
 ## Documentation
 
+- [`docs/EXPLAINER.md`](docs/EXPLAINER.md) — plain-language explainer for people new to agent identity
 - [`docs/conformance-matrix.md`](docs/conformance-matrix.md) — the full 43-check test matrix, with severities and spec references
 - [`docs/CONFORMANCE.md`](docs/CONFORMANCE.md) — per-check implementation status for the current version
 - [`docs/spec-ambiguities.md`](docs/spec-ambiguities.md) — open questions flagged to the spec author

@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Scope attenuation in AIP">
+  <title>Scope attenuation</title>
+  <desc>Concentric rectangles showing how capabilities narrow as a token is delegated through an agent chain. The user's full scope contains the planner's scope, which contains the researcher's scope, which contains the executor's scope. A crimson arrow shows an attacker trying to widen scope at a hop; burling's SA checks catch it.</desc>
+
+  <defs>
+    <style>
+      .bg        { fill: #f5ede0; }
+      .title     { font-family: Georgia, 'Times New Roman', serif; fill: #2b2319; font-weight: 400; }
+      .subtitle  { font-family: Georgia, 'Times New Roman', serif; fill: #5a4a33; font-style: italic; }
+      .label     { font-family: Georgia, serif; fill: #2b2319; }
+      .mono      { font-family: 'SF Mono', Menlo, monospace; fill: #2b2319; }
+      .check     { font-family: 'SF Mono', Menlo, monospace; fill: #5a7a4f; font-weight: 700; }
+
+      .box-user  { fill: #f0e4c8; stroke: #3b2f20; stroke-width: 1.5; }
+      .box-A     { fill: #e0d2b0; stroke: #3b2f20; stroke-width: 1.5; }
+      .box-B     { fill: #d0c098; stroke: #3b2f20; stroke-width: 1.5; }
+      .box-C     { fill: #c4d8c0; stroke: #3b2f20; stroke-width: 1.5; }
+
+      .legal-arrow { stroke: #3b2f20; stroke-width: 2; fill: none; }
+      .illegal     { stroke: #b03a2e; stroke-width: 2.5; fill: none; stroke-dasharray: 5 3; }
+      .blocked     { fill: #b03a2e; }
+    </style>
+    <marker id="legal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#3b2f20"/>
+    </marker>
+    <marker id="blocked-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b03a2e"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1000" height="560"/>
+
+  <!-- Title -->
+  <text class="title"    x="500" y="40"  text-anchor="middle" font-size="24">Scope attenuation</text>
+  <text class="subtitle" x="500" y="62"  text-anchor="middle" font-size="13">
+    A delegated token can only narrow the parent's capabilities, never widen them.
+  </text>
+
+  <!-- Concentric boxes, from outer (user) to inner (executor) -->
+
+  <!-- User's full capability (outermost) -->
+  <rect class="box-user" x="60" y="100" width="600" height="400" rx="10"/>
+  <text class="label" x="80" y="130" font-size="14" font-weight="700">User's full capability</text>
+  <text class="subtitle" x="80" y="148" font-size="11">tools: all   ·   resources: all user data   ·   actions: read, write, delete   ·   exp: 24h</text>
+
+  <!-- Agent A scope -->
+  <rect class="box-A" x="90" y="170" width="540" height="310" rx="8"/>
+  <text class="label" x="110" y="198" font-size="13" font-weight="700">Agent A — planner</text>
+  <text class="subtitle" x="110" y="214" font-size="11">tools: search, fetch   ·   resources: research docs only   ·   actions: read   ·   exp: 1h</text>
+
+  <!-- Agent B scope -->
+  <rect class="box-B" x="120" y="232" width="480" height="226" rx="8"/>
+  <text class="label" x="140" y="258" font-size="13" font-weight="700">Agent B — researcher</text>
+  <text class="subtitle" x="140" y="274" font-size="11">tools: fetch   ·   resources: one doc ID   ·   actions: read   ·   exp: 15m</text>
+
+  <!-- Agent C scope (innermost, green = executed) -->
+  <rect class="box-C" x="150" y="292" width="420" height="144" rx="8"/>
+  <text class="label" x="170" y="318" font-size="13" font-weight="700">Agent C — executor</text>
+  <text class="subtitle" x="170" y="334" font-size="11">tools: fetch   ·   resources: doc-42.pdf   ·   actions: read   ·   exp: 5m</text>
+  <text class="label" x="170" y="358" font-size="11">Within scope. Token verifies at every hop.</text>
+
+  <!-- Checkmark showing this chain is legal -->
+  <g transform="translate(560 395)">
+    <circle cx="0" cy="0" r="16" fill="#5a7a4f"/>
+    <path stroke="#f5ede0" stroke-width="3" d="M-8 0 L-2 6 L8 -6" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Delegation arrows (legal, from outer to inner) -->
+  <g>
+    <path class="legal-arrow" d="M360 150 L360 168" marker-end="url(#legal)"/>
+    <path class="legal-arrow" d="M360 216 L360 230" marker-end="url(#legal)"/>
+    <path class="legal-arrow" d="M360 276 L360 290" marker-end="url(#legal)"/>
+  </g>
+
+  <!-- ==================== Right column: what attenuation means ==================== -->
+
+  <g transform="translate(700 110)">
+    <text class="label" x="0" y="0" font-size="14" font-weight="700">Reading this diagram</text>
+
+    <text class="label" x="0" y="28" font-size="12">Each inner box is strictly</text>
+    <text class="label" x="0" y="44" font-size="12">contained by its parent.</text>
+
+    <text class="label" x="0" y="72" font-size="12">As delegation flows inward:</text>
+    <text class="mono"  x="0" y="94" font-size="11">tools</text>
+    <text class="subtitle" x="50" y="94" font-size="11">can only shrink</text>
+    <text class="mono"  x="0" y="110" font-size="11">resources</text>
+    <text class="subtitle" x="70" y="110" font-size="11">can only narrow</text>
+    <text class="mono"  x="0" y="126" font-size="11">actions</text>
+    <text class="subtitle" x="55" y="126" font-size="11">can only drop</text>
+    <text class="mono"  x="0" y="142" font-size="11">exp</text>
+    <text class="subtitle" x="32" y="142" font-size="11">can only get sooner</text>
+
+    <text class="label" x="0" y="180" font-size="12" font-weight="700">The attack it prevents</text>
+
+    <text class="label" x="0" y="204" font-size="11">A compromised intermediate</text>
+    <text class="label" x="0" y="220" font-size="11">agent tries to issue a child</text>
+    <text class="label" x="0" y="236" font-size="11">token with a capability its</text>
+    <text class="label" x="0" y="252" font-size="11">parent never had.</text>
+
+    <!-- Visual showing a scope box trying to grow outside its parent -->
+    <g transform="translate(0 275)">
+      <rect x="0" y="0" width="200" height="50" rx="4" class="box-B"/>
+      <text class="mono" x="10" y="18" font-size="11">parent: {fetch, read}</text>
+
+      <rect x="20" y="56" width="260" height="40" rx="4" fill="#f5e7e1" stroke="#b03a2e" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text class="mono" x="30" y="74" font-size="11">child: {fetch, read, delete}</text>
+      <text class="mono" x="30" y="88" font-size="10" fill="#b03a2e">                ← not in parent</text>
+
+      <!-- The blocked arrow + REJECTED badge -->
+      <rect class="blocked" x="0" y="108" width="280" height="22" rx="3"/>
+      <text class="mono" x="140" y="123" text-anchor="middle" font-size="11" fill="#f5ede0" font-weight="700">
+        REJECTED at SA-01 · scope-attenuation
+      </text>
+    </g>
+  </g>
+
+  <!-- Which checks enforce this -->
+  <g transform="translate(60 525)">
+    <text class="check" x="0" y="0" font-size="11">checks: SA-01 (tools) · SA-02 (resources) · SA-03 (actions) · SA-04 (temporal) · SA-05 (transitivity) · SA-06 (no new caps)</text>
+  </g>
+</svg>

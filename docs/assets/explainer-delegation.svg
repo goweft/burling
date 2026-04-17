@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" role="img" aria-label="Why agent identity matters">
+  <title>Why agent identity matters</title>
+  <desc>Two stacked scenes. Top: a chain of agents passing requests with no verifiable delegation; a compromised agent acts outside its authority undetected. Bottom: the same chain using AIP tokens, where each handoff is a signed, scope-narrowing token that burling can verify.</desc>
+
+  <defs>
+    <style>
+      .bg        { fill: #f5ede0; }
+      .title     { font-family: Georgia, 'Times New Roman', serif; fill: #2b2319; font-weight: 400; }
+      .subtitle  { font-family: Georgia, 'Times New Roman', serif; fill: #5a4a33; font-style: italic; }
+      .label     { font-family: Georgia, 'Times New Roman', serif; fill: #2b2319; }
+      .mono      { font-family: 'SF Mono', Menlo, Consolas, monospace; fill: #2b2319; }
+      .actor     { fill: #e9dcc0; stroke: #3b2f20; stroke-width: 1.5; }
+      .bad-arrow { stroke: #b03a2e; stroke-width: 2.5; fill: none; stroke-dasharray: 6 4; }
+      .bad-label { font-family: Georgia, serif; fill: #b03a2e; font-style: italic; }
+      .good-arrow{ stroke: #3b2f20; stroke-width: 2; fill: none; }
+      .good-label{ font-family: 'SF Mono', Menlo, monospace; fill: #2b2319; font-size: 10px; }
+      .token     { fill: #c4d8c0; stroke: #3b2f20; stroke-width: 1; }
+      .check     { fill: #5a7a4f; }
+      .x-mark    { stroke: #b03a2e; stroke-width: 3; }
+      .problem   { fill: #b03a2e; }
+    </style>
+    <marker id="badhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b03a2e"/>
+    </marker>
+    <marker id="goodhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#3b2f20"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1000" height="640"/>
+
+  <!-- ==================== TOP: Before ==================== -->
+  <text class="title"    x="500" y="40"  text-anchor="middle" font-size="22">Today — agents delegating without a protocol</text>
+  <text class="subtitle" x="500" y="62"  text-anchor="middle" font-size="13">
+    Each handoff is ad-hoc. When something goes wrong, nobody can prove what was authorized.
+  </text>
+
+  <!-- Row of actors: User → A → B → C -->
+  <g transform="translate(0 100)">
+    <!-- User -->
+    <g transform="translate(80 0)">
+      <circle class="actor" cx="40" cy="30" r="26"/>
+      <text class="label" x="40" y="35" text-anchor="middle" font-size="11">user</text>
+    </g>
+
+    <!-- Agent A -->
+    <g transform="translate(280 0)">
+      <rect class="actor" x="0" y="4" width="100" height="52" rx="6"/>
+      <text class="label" x="50" y="26" text-anchor="middle" font-size="12" font-weight="700">Agent A</text>
+      <text class="subtitle" x="50" y="44" text-anchor="middle" font-size="10">planner</text>
+    </g>
+
+    <!-- Agent B -->
+    <g transform="translate(480 0)">
+      <rect class="actor" x="0" y="4" width="100" height="52" rx="6"/>
+      <text class="label" x="50" y="26" text-anchor="middle" font-size="12" font-weight="700">Agent B</text>
+      <text class="subtitle" x="50" y="44" text-anchor="middle" font-size="10">researcher</text>
+    </g>
+
+    <!-- Agent C (compromised) -->
+    <g transform="translate(680 0)">
+      <rect class="actor" x="0" y="4" width="100" height="52" rx="6" fill="#e9c9c4" stroke="#b03a2e"/>
+      <text class="label" x="50" y="26" text-anchor="middle" font-size="12" font-weight="700" fill="#b03a2e">Agent C</text>
+      <text class="bad-label" x="50" y="44" text-anchor="middle" font-size="10">compromised</text>
+    </g>
+
+    <!-- Vague arrows with "trust me" labels -->
+    <path class="bad-arrow" d="M148 30 L278 30" marker-end="url(#badhead)"/>
+    <text class="bad-label" x="213" y="22" text-anchor="middle" font-size="11">"do a thing"</text>
+
+    <path class="bad-arrow" d="M380 30 L478 30" marker-end="url(#badhead)"/>
+    <text class="bad-label" x="429" y="22" text-anchor="middle" font-size="11">"help me"</text>
+
+    <path class="bad-arrow" d="M580 30 L678 30" marker-end="url(#badhead)"/>
+    <text class="bad-label" x="629" y="22" text-anchor="middle" font-size="11">"run this"</text>
+
+    <!-- Escape arrow from C doing something it shouldn't -->
+    <path class="bad-arrow" d="M780 45 Q880 80 880 130" marker-end="url(#badhead)"/>
+    <text class="bad-label" x="890" y="95" font-size="11">deletes files,</text>
+    <text class="bad-label" x="890" y="108" font-size="11">exfiltrates data,</text>
+    <text class="bad-label" x="890" y="121" font-size="11">calls external APIs</text>
+
+    <!-- Problem callouts below the row -->
+    <g transform="translate(0 180)">
+      <rect x="100" y="0" width="800" height="56" rx="4" fill="#f5e7e1" stroke="#b03a2e" stroke-width="1"/>
+      <text class="bad-label" x="120" y="22" font-size="12" font-weight="700">What can't be answered:</text>
+      <text class="label" x="120" y="42" font-size="11">• Was Agent C actually authorized by the user? • Did the request properly narrow in scope?</text>
+      <text class="label" x="120" y="56" font-size="11">• Can we reconstruct the chain after the fact? • Did someone tamper with what was passed?</text>
+    </g>
+  </g>
+
+  <!-- Divider -->
+  <line x1="40" y1="340" x2="960" y2="340" stroke="#3b2f20" stroke-width="0.8" stroke-dasharray="4 4"/>
+
+  <!-- ==================== BOTTOM: With AIP ==================== -->
+  <text class="title"    x="500" y="378" text-anchor="middle" font-size="22">With AIP — every handoff carries a verifiable token</text>
+  <text class="subtitle" x="500" y="400" text-anchor="middle" font-size="13">
+    Each arrow carries a signed IBCT. burling's job is to verify that every token obeys the spec.
+  </text>
+
+  <g transform="translate(0 435)">
+    <!-- User -->
+    <g transform="translate(80 0)">
+      <circle class="actor" cx="40" cy="30" r="26"/>
+      <text class="label" x="40" y="35" text-anchor="middle" font-size="11">user</text>
+    </g>
+
+    <!-- Agent A -->
+    <g transform="translate(280 0)">
+      <rect class="actor" x="0" y="4" width="100" height="52" rx="6"/>
+      <text class="label" x="50" y="26" text-anchor="middle" font-size="12" font-weight="700">Agent A</text>
+      <text class="subtitle" x="50" y="44" text-anchor="middle" font-size="10">planner</text>
+    </g>
+
+    <!-- Agent B -->
+    <g transform="translate(480 0)">
+      <rect class="actor" x="0" y="4" width="100" height="52" rx="6"/>
+      <text class="label" x="50" y="26" text-anchor="middle" font-size="12" font-weight="700">Agent B</text>
+      <text class="subtitle" x="50" y="44" text-anchor="middle" font-size="10">researcher</text>
+    </g>
+
+    <!-- Agent C (now verified) -->
+    <g transform="translate(680 0)">
+      <rect class="actor" x="0" y="4" width="100" height="52" rx="6"/>
+      <text class="label" x="50" y="26" text-anchor="middle" font-size="12" font-weight="700">Agent C</text>
+      <text class="subtitle" x="50" y="44" text-anchor="middle" font-size="10">executor</text>
+    </g>
+
+    <!-- Arrows with tokens -->
+    <path class="good-arrow" d="M148 30 L278 30" marker-end="url(#goodhead)"/>
+    <g transform="translate(175 8)">
+      <rect class="token" x="0" y="0" width="70" height="16" rx="2"/>
+      <text class="mono" x="35" y="11" text-anchor="middle" font-size="9">IBCT #1</text>
+    </g>
+    <circle class="check" cx="213" cy="48" r="6"/>
+    <path stroke="#f5ede0" stroke-width="2" d="M209 48 L212 51 L217 45" fill="none"/>
+
+    <path class="good-arrow" d="M380 30 L478 30" marker-end="url(#goodhead)"/>
+    <g transform="translate(394 8)">
+      <rect class="token" x="0" y="0" width="70" height="16" rx="2"/>
+      <text class="mono" x="35" y="11" text-anchor="middle" font-size="9">IBCT #2</text>
+    </g>
+    <circle class="check" cx="429" cy="48" r="6"/>
+    <path stroke="#f5ede0" stroke-width="2" d="M425 48 L428 51 L433 45" fill="none"/>
+
+    <path class="good-arrow" d="M580 30 L678 30" marker-end="url(#goodhead)"/>
+    <g transform="translate(594 8)">
+      <rect class="token" x="0" y="0" width="70" height="16" rx="2"/>
+      <text class="mono" x="35" y="11" text-anchor="middle" font-size="9">IBCT #3</text>
+    </g>
+    <circle class="check" cx="629" cy="48" r="6"/>
+    <path stroke="#f5ede0" stroke-width="2" d="M625 48 L628 51 L633 45" fill="none"/>
+
+    <!-- What each check means -->
+    <g transform="translate(0 100)">
+      <rect x="100" y="0" width="800" height="70" rx="4" fill="#e5ede0" stroke="#5a7a4f" stroke-width="1"/>
+      <text class="label" x="120" y="22" font-size="12" font-weight="700" fill="#2b4a2f">At every hop, a verifier (like burling) confirms:</text>
+      <text class="label" x="120" y="40" font-size="11">• Signature verifies against the issuer's published identity (ID-01..ID-09, CM-01..CM-04)</text>
+      <text class="label" x="120" y="54" font-size="11">• Required claims are present and the token isn't expired (CM-05..CM-07)</text>
+      <text class="label" x="120" y="68" font-size="11">• The child's scope is a strict narrowing of the parent's scope (SA-01..SA-06, v0.2)</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" role="img" aria-label="Anatomy of an IBCT">
+  <title>Anatomy of an IBCT</title>
+  <desc>A labeled breakdown of a compact Invocation-Bound Capability Token. Three colored segments represent header, payload, and signature. Arrows point from each field to a plain-language explanation of what it means and which burling check verifies it.</desc>
+
+  <defs>
+    <style>
+      .bg       { fill: #f5ede0; }
+      .title    { font-family: Georgia, 'Times New Roman', serif; fill: #2b2319; font-weight: 400; }
+      .subtitle { font-family: Georgia, 'Times New Roman', serif; fill: #5a4a33; font-style: italic; }
+      .mono     { font-family: 'SF Mono', Menlo, Consolas, monospace; fill: #2b2319; }
+      .label    { font-family: Georgia, serif; fill: #2b2319; }
+      .check    { font-family: 'SF Mono', Menlo, monospace; fill: #5a7a4f; font-weight: 700; }
+      .box-hdr  { fill: #e9dcc0; stroke: #3b2f20; stroke-width: 1.5; }
+      .box-pl   { fill: #d9c8a8; stroke: #3b2f20; stroke-width: 1.5; }
+      .box-sig  { fill: #c4d8c0; stroke: #3b2f20; stroke-width: 1.5; }
+      .line     { stroke: #3b2f20; stroke-width: 1; fill: none; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1000" height="680"/>
+
+  <!-- Title -->
+  <text class="title"    x="500" y="40"  text-anchor="middle" font-size="24">Anatomy of an IBCT</text>
+  <text class="subtitle" x="500" y="62"  text-anchor="middle" font-size="13">
+    Compact-mode token: three base64url segments joined by dots, same shape as a JWT but with AIP-specific claims.
+  </text>
+
+  <!-- The raw token form -->
+  <g transform="translate(80 95)">
+    <rect class="box-hdr" x="0"   y="0" width="260" height="30" rx="3"/>
+    <rect class="box-pl"  x="265" y="0" width="380" height="30" rx="3"/>
+    <rect class="box-sig" x="650" y="0" width="260" height="30" rx="3"/>
+    <text class="mono" x="130" y="20" text-anchor="middle" font-size="12">eyJhbGciOiJFZERTQSIsInR5c...</text>
+    <text class="mono" x="455" y="20" text-anchor="middle" font-size="12">eyJpc3MiOiJhaXA6d2ViOmV4...</text>
+    <text class="mono" x="780" y="20" text-anchor="middle" font-size="12">t9kZ3B1bGljX2FwaS1zdWI...</text>
+    <text class="mono" x="262" y="20" font-size="16" fill="#b03a2e">·</text>
+    <text class="mono" x="647" y="20" font-size="16" fill="#b03a2e">·</text>
+  </g>
+
+  <!-- ==================== Header ==================== -->
+  <g transform="translate(80 155)">
+    <rect class="box-hdr" x="0" y="0" width="260" height="130" rx="6"/>
+    <text class="label" x="10" y="22" font-size="14" font-weight="700">Header</text>
+    <text class="subtitle" x="10" y="38" font-size="10">(base64url → JSON)</text>
+
+    <text class="mono" x="10" y="62" font-size="12">{</text>
+    <text class="mono" x="20" y="78" font-size="12">"alg": "EdDSA",</text>
+    <text class="mono" x="20" y="94" font-size="12">"typ": "aip-ibct+jwt",</text>
+    <text class="mono" x="20" y="110" font-size="12">"kid": "k1"</text>
+    <text class="mono" x="10" y="126" font-size="12">}</text>
+  </g>
+
+  <!-- Header annotations -->
+  <g transform="translate(360 155)">
+    <text class="label" x="0" y="80" font-size="12" font-weight="700">Which key signed this?</text>
+    <text class="label" x="0" y="97" font-size="11">Tells the verifier what algorithm and</text>
+    <text class="label" x="0" y="111" font-size="11">which key ID to look up in the issuer's</text>
+    <text class="label" x="0" y="125" font-size="11">published identity document.</text>
+    <text class="check" x="0" y="148" font-size="11">checks: CM-01 (alg=EdDSA), CM-02 (typ), CM-03 (kid)</text>
+    <path class="line" d="M-20 78 L340 78"/>
+  </g>
+
+  <!-- ==================== Payload ==================== -->
+  <g transform="translate(80 310)">
+    <rect class="box-pl" x="0" y="0" width="260" height="260" rx="6"/>
+    <text class="label" x="10" y="22" font-size="14" font-weight="700">Payload</text>
+    <text class="subtitle" x="10" y="38" font-size="10">(base64url → JSON)</text>
+
+    <text class="mono" x="10" y="62" font-size="11">{</text>
+    <text class="mono" x="20" y="78" font-size="11">"iss": "aip:web:example/A",</text>
+    <text class="mono" x="20" y="94" font-size="11">"sub": "aip:web:example/B",</text>
+    <text class="mono" x="20" y="110" font-size="11">"aud": ["mcp-server"],</text>
+    <text class="mono" x="20" y="126" font-size="11">"exp": 1729012800,</text>
+    <text class="mono" x="20" y="142" font-size="11">"nbf": 1729011900,</text>
+    <text class="mono" x="20" y="158" font-size="11">"jti": "01HZ5N8...",</text>
+    <text class="mono" x="20" y="174" font-size="11">"scope": {</text>
+    <text class="mono" x="30" y="190" font-size="11">"tools":["search"],</text>
+    <text class="mono" x="30" y="206" font-size="11">"actions":["read"]</text>
+    <text class="mono" x="20" y="222" font-size="11">},</text>
+    <text class="mono" x="20" y="238" font-size="11">"invocation": {...}</text>
+    <text class="mono" x="10" y="254" font-size="11">}</text>
+  </g>
+
+  <!-- Payload annotations -->
+  <g transform="translate(360 310)">
+    <text class="label" x="0" y="80" font-size="12" font-weight="700">Who, for whom, how long, what for?</text>
+
+    <text class="mono"  x="0" y="102" font-size="11">iss/sub</text>
+    <text class="label" x="70" y="102" font-size="11">— issuer and the agent acting on their behalf</text>
+
+    <text class="mono"  x="0" y="120" font-size="11">aud</text>
+    <text class="label" x="70" y="120" font-size="11">— the intended recipient (e.g. an MCP server)</text>
+
+    <text class="mono"  x="0" y="138" font-size="11">exp / nbf</text>
+    <text class="label" x="70" y="138" font-size="11">— not-before and expires-at unix times</text>
+
+    <text class="mono"  x="0" y="156" font-size="11">jti</text>
+    <text class="label" x="70" y="156" font-size="11">— unique ID per token (UUIDv4 or ULID)</text>
+
+    <text class="mono"  x="0" y="180" font-size="11">scope</text>
+    <text class="label" x="70" y="180" font-size="11">— the capabilities this token grants.</text>
+    <text class="label" x="70" y="194" font-size="11">   Must be a subset of the parent's scope</text>
+    <text class="label" x="70" y="208" font-size="11">   in chained mode. This is the core</text>
+    <text class="label" x="70" y="222" font-size="11">   security property of the protocol.</text>
+
+    <text class="mono"  x="0" y="244" font-size="11">invocation</text>
+    <text class="label" x="70" y="244" font-size="11">— per-call binding (session, request ID)</text>
+
+    <text class="check" x="0" y="268" font-size="11">checks: CM-05 (required), CM-06 (exp), CM-07 (nbf),</text>
+    <text class="check" x="0" y="282" font-size="11">        CM-08 (TTL), CM-09 (jti format), SA-01..06 (scope)</text>
+
+    <path class="line" d="M-20 78 L340 78"/>
+  </g>
+
+  <!-- ==================== Signature ==================== -->
+  <g transform="translate(80 595)">
+    <rect class="box-sig" x="0" y="0" width="260" height="60" rx="6"/>
+    <text class="label" x="10" y="22" font-size="14" font-weight="700">Signature</text>
+    <text class="mono" x="10" y="42" font-size="10">Ed25519( header.payload )</text>
+    <text class="subtitle" x="10" y="54" font-size="9">64 bytes, base64url</text>
+  </g>
+
+  <!-- Signature annotation -->
+  <g transform="translate(360 595)">
+    <text class="label" x="0" y="20" font-size="12" font-weight="700">Proof of authenticity.</text>
+    <text class="label" x="0" y="36" font-size="11">The issuer signed the exact bytes of</text>
+    <text class="label" x="0" y="50" font-size="11">header.payload. Any byte change invalidates it.</text>
+    <text class="check" x="0" y="66" font-size="11">checks: CM-04 (signature verifies)</text>
+    <path class="line" d="M-20 20 L340 20"/>
+  </g>
+</svg>
