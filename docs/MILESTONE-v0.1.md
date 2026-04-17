@@ -24,7 +24,7 @@ scope is v0.2 or later, no exceptions.
 |--------|--------|-------|
 | Identity Document Validation (`internal/identity`) | ID-01 through ID-09 | 9 |
 | Compact Mode JWT/Ed25519 (`internal/compact`) | CM-01 through CM-09 | 9 |
-| **Total live** | | **18 of 45** |
+| **Total live** | | **18 of 43** |
 
 ### Stubbed in v0.1
 
@@ -72,9 +72,9 @@ ERROR always fails exit code; `--strict` promotes WARNING to failing.
 
 ### Documentation
 
-- README updated: "v0.1 implements 18 of 45 checks. Six modules stubbed,
+- README updated: "v0.1 implements 18 of 43 checks. Six modules stubbed,
   will land in v0.2."
-- New file `docs/CONFORMANCE.md`: status table for all 45 check IDs
+- New file `docs/CONFORMANCE.md`: status table for all 43 check IDs
   (live / stubbed / deferred), updated as work lands
 - One worked example in README: sample token + command + JSON output
 

@@ -18,9 +18,20 @@
 
 ---
 
-The name follows the [goweft](https://github.com/goweft) textile convention: *burling* is the process of inspecting finished cloth for defects and removing them. burling inspects finished IBCTs for protocol defects.
+## What problem this solves
 
-> **New to agent identity?** Start with the [plain-language explainer](docs/EXPLAINER.md) — three diagrams and ~600 words that walk through why this problem exists and what AIP does about it.
+When an AI agent delegates a task to another agent, something has to prove what the second agent is allowed to do on behalf of the first — and what it isn't. Without that proof, a compromised downstream agent can quietly exceed its authority, and there's no audit trail connecting the original user's intent to what the final agent actually did. The Agent Identity Protocol (`draft-prakash-aip-00`) proposes a token format that answers this: a signed, scope-bounded, chain-verifiable credential for every agent-to-agent call.
+
+burling is the conformance validator for those tokens. It catches broken delegation before it ships — unconstrained scope, invalid signatures, expired identities, tampered chains — by mechanically checking every normative requirement in the AIP draft. If your system produces or consumes AIP tokens and you want to know they're correct before they hit production, this is the tool that tells you.
+
+> **New to agent identity?** The [plain-language explainer](docs/EXPLAINER.md) walks through the problem, the protocol, and the cleverest idea in ~600 words and three diagrams.
+
+## Who this is for
+
+- **Protocol implementers** building AIP issuers, verifiers, or runtimes — use burling as a conformance harness, both to test your own code and to check interop against other implementations.
+- **MCP and agent-infrastructure developers** who need delegation tokens in CI — run `burling lint` in a pipeline step and fail the build if the token your code produces doesn't conform.
+- **Security engineers** reviewing agent systems — use burling's findings plus the [spec-ambiguities doc](docs/spec-ambiguities.md) to evaluate whether a given AIP implementation matches the draft or quietly diverges from it.
+- **People new to the protocol** — read the [explainer](docs/EXPLAINER.md), run the CLI against the committed fixtures, see what a real conformance run looks like.
 
 <h2 id="status">Status</h2>
 
@@ -167,6 +178,10 @@ burling is the conformance layer. The rest of the stack:
 | **[cas](https://github.com/goweft/cas)** | Go | Conversational Agent Shell — terminal TUI where conversation generates workspaces. |
 | **[ratine](https://github.com/goweft/ratine)** | Python | Agent memory poisoning detector. |
 | **[crocking](https://github.com/goweft/crocking)** | Python | AI authorship detector for git repositories. |
+
+## About the name
+
+The name follows the [goweft](https://github.com/goweft) textile convention: *burling* is the process of inspecting finished cloth for defects and removing them. burling inspects finished IBCTs for protocol defects.
 
 ## Status of outreach
 

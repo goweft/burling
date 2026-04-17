@@ -121,10 +121,6 @@ blocks, which are meaningful only once chained mode is supported.
 | MCP Binding | §4.1 | 0 | 3 | 3 |
 | **Total** | | **18** | **25** | **43** |
 
-Note: matrix row count is 43, not 45. The original kickoff framing
-cited 45 checks; the current matrix has 43 after refinement. This
-document tracks the matrix as it actually stands.
-
 ## How to update this document
 
 When a check moves from STUB to LIVE:
