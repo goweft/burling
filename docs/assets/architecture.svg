@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" role="img" aria-label="burling architecture diagram">
+  <title>burling architecture</title>
+  <desc>Architecture diagram showing the four CLI commands flowing into the module dispatch, with identity and compact modules LIVE and six other modules stubbed for v0.2. The Resolver interface is shared between identity and compact.</desc>
+
+  <defs>
+    <style>
+      .bg      { fill: #f5ede0; }
+      .label   { font-family: Georgia, 'Times New Roman', serif; fill: #2b2319; }
+      .title   { font-family: Georgia, 'Times New Roman', serif; fill: #2b2319; font-weight: 400; }
+      .sub     { font-family: Georgia, 'Times New Roman', serif; fill: #5a4a33; font-style: italic; }
+      .mono    { font-family: 'SF Mono', Menlo, Consolas, monospace; fill: #2b2319; }
+      .stroke  { stroke: #3b2f20; stroke-width: 1.5; fill: none; }
+      .arrow   { stroke: #3b2f20; stroke-width: 1.5; fill: none; marker-end: url(#arr); }
+      .box-cli   { fill: #e9dcc0; stroke: #3b2f20; stroke-width: 1.5; }
+      .box-disp  { fill: #d9c8a8; stroke: #3b2f20; stroke-width: 1.5; }
+      .box-live  { fill: #c4d8c0; stroke: #3b2f20; stroke-width: 1.5; }
+      .box-stub  { fill: #e9dcc0; stroke: #3b2f20; stroke-width: 1.5; stroke-dasharray: 4 3; }
+      .box-shared{ fill: #f5ede0; stroke: #b03a2e; stroke-width: 1.5; }
+      .box-out   { fill: #e9dcc0; stroke: #3b2f20; stroke-width: 1.5; }
+      .badge-live{ fill: #5a7a4f; }
+      .badge-stub{ fill: #8a7458; }
+      .badge-txt { font-family: 'SF Mono', Menlo, Consolas, monospace; fill: #f5ede0; font-size: 10px; font-weight: 700; }
+    </style>
+
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#3b2f20"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1000" height="620"/>
+
+  <!-- Title strip -->
+  <text class="title" x="500" y="38" text-anchor="middle" font-size="24">burling — validation pipeline</text>
+  <text class="sub"   x="500" y="60" text-anchor="middle" font-size="13">
+    four commands → module dispatch → aggregated report
+  </text>
+
+  <!-- ===== Column 1: CLI commands ===== -->
+  <text class="label" x="100" y="95" text-anchor="middle" font-size="14" font-weight="700">CLI</text>
+
+  <g>
+    <rect class="box-cli" x="20" y="110" width="160" height="50" rx="6"/>
+    <text class="mono" x="100" y="135" text-anchor="middle" font-size="13">validate</text>
+    <text class="sub"  x="100" y="151" text-anchor="middle" font-size="10">compact IBCT</text>
+  </g>
+  <g>
+    <rect class="box-cli" x="20" y="180" width="160" height="50" rx="6"/>
+    <text class="mono" x="100" y="205" text-anchor="middle" font-size="13">validate-identity</text>
+    <text class="sub"  x="100" y="221" text-anchor="middle" font-size="10">url | file</text>
+  </g>
+  <g>
+    <rect class="box-cli" x="20" y="250" width="160" height="50" rx="6"/>
+    <text class="mono" x="100" y="275" text-anchor="middle" font-size="13">lint</text>
+    <text class="sub"  x="100" y="291" text-anchor="middle" font-size="10">all modules, JSON</text>
+  </g>
+  <g>
+    <rect class="box-cli" x="20" y="320" width="160" height="50" rx="6"/>
+    <text class="mono" x="100" y="345" text-anchor="middle" font-size="13">audit-chain</text>
+    <text class="sub"  x="100" y="361" text-anchor="middle" font-size="10">v0.1 stub</text>
+  </g>
+
+  <!-- ===== Column 2: Dispatch hub ===== -->
+  <text class="label" x="320" y="95" text-anchor="middle" font-size="14" font-weight="700">dispatch</text>
+  <g>
+    <rect class="box-disp" x="250" y="180" width="140" height="120" rx="6"/>
+    <text class="mono"  x="320" y="215" text-anchor="middle" font-size="13">cmd/burling</text>
+    <text class="sub"   x="320" y="236" text-anchor="middle" font-size="10">parse flags</text>
+    <text class="sub"   x="320" y="250" text-anchor="middle" font-size="10">read input</text>
+    <text class="sub"   x="320" y="264" text-anchor="middle" font-size="10">route to module</text>
+    <text class="sub"   x="320" y="284" text-anchor="middle" font-size="10">render report</text>
+  </g>
+
+  <!-- CLI → dispatch arrows -->
+  <path class="arrow" d="M180 135 Q215 135 250 200"/>
+  <path class="arrow" d="M180 205 L250 225"/>
+  <path class="arrow" d="M180 275 L250 265"/>
+  <path class="arrow" d="M180 345 Q215 345 250 290"/>
+
+  <!-- ===== Column 3: Modules ===== -->
+  <text class="label" x="620" y="95" text-anchor="middle" font-size="14" font-weight="700">modules</text>
+
+  <!-- LIVE: identity + compact -->
+  <g>
+    <rect class="box-live" x="450" y="115" width="340" height="60" rx="6"/>
+    <text class="mono"  x="470" y="140" font-size="13">internal/identity</text>
+    <text class="sub"   x="470" y="158" font-size="10">§2.3 · ID-01..ID-09 · JCS + Ed25519 verify</text>
+    <rect class="badge-live" x="740" y="125" width="40" height="16" rx="3"/>
+    <text class="badge-txt"  x="760" y="137" text-anchor="middle">LIVE</text>
+  </g>
+  <g>
+    <rect class="box-live" x="450" y="185" width="340" height="60" rx="6"/>
+    <text class="mono"  x="470" y="210" font-size="13">internal/compact</text>
+    <text class="sub"   x="470" y="228" font-size="10">§3.1 · CM-01..CM-09 · JWT/Ed25519</text>
+    <rect class="badge-live" x="740" y="195" width="40" height="16" rx="3"/>
+    <text class="badge-txt"  x="760" y="207" text-anchor="middle">LIVE</text>
+  </g>
+
+  <!-- STUB modules: six, compact grid -->
+  <g>
+    <rect class="box-stub" x="450" y="260" width="162" height="42" rx="6"/>
+    <text class="mono" x="460" y="280" font-size="11">internal/chained</text>
+    <text class="sub"  x="460" y="294" font-size="9">§3.2 · CH-01..05</text>
+    <rect class="badge-stub" x="568" y="268" width="38" height="14" rx="3"/>
+    <text class="badge-txt"  x="587" y="279" text-anchor="middle">STUB</text>
+  </g>
+  <g>
+    <rect class="box-stub" x="628" y="260" width="162" height="42" rx="6"/>
+    <text class="mono" x="638" y="280" font-size="11">internal/scope</text>
+    <text class="sub"  x="638" y="294" font-size="9">§3.3 · SA-01..06</text>
+    <rect class="badge-stub" x="746" y="268" width="38" height="14" rx="3"/>
+    <text class="badge-txt"  x="765" y="279" text-anchor="middle">STUB</text>
+  </g>
+  <g>
+    <rect class="box-stub" x="450" y="312" width="162" height="42" rx="6"/>
+    <text class="mono" x="460" y="332" font-size="11">internal/depth</text>
+    <text class="sub"  x="460" y="346" font-size="9">§3.4 · BD-01..03</text>
+    <rect class="badge-stub" x="568" y="320" width="38" height="14" rx="3"/>
+    <text class="badge-txt"  x="587" y="331" text-anchor="middle">STUB</text>
+  </g>
+  <g>
+    <rect class="box-stub" x="628" y="312" width="162" height="42" rx="6"/>
+    <text class="mono" x="638" y="332" font-size="11">internal/delegation</text>
+    <text class="sub"  x="638" y="346" font-size="9">§3.5 · DC-01..04</text>
+    <rect class="badge-stub" x="746" y="320" width="38" height="14" rx="3"/>
+    <text class="badge-txt"  x="765" y="331" text-anchor="middle">STUB</text>
+  </g>
+  <g>
+    <rect class="box-stub" x="450" y="364" width="162" height="42" rx="6"/>
+    <text class="mono" x="460" y="384" font-size="11">internal/completion</text>
+    <text class="sub"  x="460" y="398" font-size="9">§3.6 · CB-01..04</text>
+    <rect class="badge-stub" x="568" y="372" width="38" height="14" rx="3"/>
+    <text class="badge-txt"  x="587" y="383" text-anchor="middle">STUB</text>
+  </g>
+  <g>
+    <rect class="box-stub" x="628" y="364" width="162" height="42" rx="6"/>
+    <text class="mono" x="638" y="384" font-size="11">internal/mcpbind</text>
+    <text class="sub"  x="638" y="398" font-size="9">§4.1 · MB-01..03</text>
+    <rect class="badge-stub" x="746" y="372" width="38" height="14" rx="3"/>
+    <text class="badge-txt"  x="765" y="383" text-anchor="middle">STUB</text>
+  </g>
+
+  <!-- dispatch → module arrows (one per LIVE, fanned line to STUB cluster) -->
+  <path class="arrow" d="M390 215 L450 145"/>  <!-- identity -->
+  <path class="arrow" d="M390 240 L450 215"/>  <!-- compact -->
+  <path class="arrow" d="M390 265 L450 330"/>  <!-- stubs -->
+
+  <!-- ===== Shared Resolver interface (spans both LIVE modules) ===== -->
+  <g>
+    <rect class="box-shared" x="820" y="135" width="160" height="110" rx="6"/>
+    <text class="mono" x="900" y="162" text-anchor="middle" font-size="12">identity.Resolver</text>
+    <text class="sub"  x="900" y="180" text-anchor="middle" font-size="10">shared interface</text>
+    <line x1="835" y1="188" x2="965" y2="188" stroke="#b03a2e" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text class="sub"  x="900" y="204" text-anchor="middle" font-size="9">MapResolver  (tests)</text>
+    <text class="sub"  x="900" y="220" text-anchor="middle" font-size="9">HTTPResolver (prod)</text>
+    <text class="sub"  x="900" y="236" text-anchor="middle" font-size="9">well-known URL fetch</text>
+  </g>
+  <path class="arrow" d="M790 145 L820 175"/>
+  <path class="arrow" d="M790 215 L820 205"/>
+
+  <!-- ===== Column 4: Report / output ===== -->
+  <text class="label" x="500" y="465" text-anchor="middle" font-size="14" font-weight="700">report.Report</text>
+
+  <g>
+    <rect class="box-out" x="320" y="480" width="360" height="80" rx="6"/>
+    <text class="mono" x="500" y="507" text-anchor="middle" font-size="13">[]Finding → text | JSON</text>
+    <text class="sub"  x="500" y="527" text-anchor="middle" font-size="11">
+      ERROR → exit 1   ·   WARNING → exit 1 under --strict
+    </text>
+    <text class="sub"  x="500" y="545" text-anchor="middle" font-size="11">
+      INFO → never fatal   ·   CI-stable JSON schema
+    </text>
+  </g>
+
+  <!-- module → report arrows (one from each row, converging) -->
+  <path class="arrow" d="M620 175 Q500 430 500 480"/>
+  <path class="arrow" d="M620 245 Q500 430 500 480"/>
+  <path class="arrow" d="M620 335 Q500 430 500 480"/>
+  <path class="arrow" d="M620 385 Q500 430 500 480"/>
+
+  <!-- ===== Legend ===== -->
+  <g transform="translate(30 575)">
+    <rect class="box-live" x="0" y="0" width="22" height="14" rx="2"/>
+    <text class="sub" x="28" y="11" font-size="11">LIVE — fully implemented in v0.1</text>
+
+    <rect class="box-stub" x="280" y="0" width="22" height="14" rx="2"/>
+    <text class="sub" x="308" y="11" font-size="11">STUB — INFO finding, deferred to v0.2</text>
+
+    <rect class="box-shared" x="600" y="0" width="22" height="14" rx="2"/>
+    <text class="sub" x="628" y="11" font-size="11">shared interface</text>
+  </g>
+</svg>

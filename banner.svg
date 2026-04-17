@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="burling — AIP conformance validator">
+  <title>burling</title>
+  <desc>Banner for the burling project — a conformance validator for the Agent Identity Protocol. The background is a subtle woven pattern evoking textile inspection; a magnifier highlights a single flagged thread.</desc>
+
+  <defs>
+    <!-- Woven pattern: two offset line sets evoke warp and weft. -->
+    <pattern id="weave" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+      <rect width="12" height="12" fill="#f5ede0"/>
+      <path d="M0 6 H12 M6 0 V12" stroke="#d9c8a8" stroke-width="1"/>
+      <path d="M0 0 L6 6 M6 6 L12 12" stroke="#c9b48a" stroke-width="0.6"/>
+    </pattern>
+
+    <!-- Subtle vignette so the banner ends don't fight the page edges. -->
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.08"/>
+    </radialGradient>
+
+    <!-- Magnifier lens gradient: warm glass over the weave. -->
+    <radialGradient id="lens" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#fffdf7" stop-opacity="0.35"/>
+      <stop offset="70%" stop-color="#fffdf7" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#fffdf7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Backdrop -->
+  <rect width="1200" height="300" fill="url(#weave)"/>
+  <rect width="1200" height="300" fill="url(#vignette)"/>
+
+  <!-- A single flagged thread, shown as a slightly off-palette crimson
+       strand running diagonally. This is the "defect" burling catches. -->
+  <g opacity="0.85">
+    <path d="M820 60 L960 200" stroke="#b03a2e" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M818 62 L958 202" stroke="#e06a5c" stroke-width="0.8" stroke-linecap="round" opacity="0.7"/>
+  </g>
+
+  <!-- Magnifier frame around the defect -->
+  <g transform="translate(890 135)">
+    <!-- Lens shadow -->
+    <circle cx="2" cy="4" r="70" fill="#000" opacity="0.08"/>
+    <!-- Lens glass (sees the weave beneath through semi-transparency) -->
+    <circle cx="0" cy="0" r="68" fill="url(#lens)" stroke="#3b2f20" stroke-width="4"/>
+    <!-- Lens highlight -->
+    <ellipse cx="-22" cy="-28" rx="18" ry="9" fill="#fffdf7" opacity="0.5"/>
+    <!-- Handle -->
+    <g transform="rotate(45)">
+      <rect x="66" y="-7" width="64" height="14" rx="7" fill="#3b2f20"/>
+      <rect x="66" y="-7" width="64" height="4" rx="2" fill="#5a4a33" opacity="0.7"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <g font-family="Georgia, 'Times New Roman', serif" fill="#2b2319">
+    <text x="80" y="170" font-size="108" font-weight="400" letter-spacing="-4">burling</text>
+    <text x="84" y="215" font-size="22" font-style="italic" fill="#5a4a33" letter-spacing="1">
+      inspecting finished tokens for protocol defects
+    </text>
+  </g>
+
+  <!-- Bottom rule -->
+  <rect x="0" y="294" width="1200" height="6" fill="#3b2f20"/>
+</svg>

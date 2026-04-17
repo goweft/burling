@@ -1,12 +1,25 @@
-# burling
+<p align="center"><img src="banner.svg" alt="burling" width="100%"></p>
 
-**AIP conformance validator and IBCT chain auditor.**
+<h1 align="center">burling</h1>
+<p align="center"><strong>AIP conformance validator and IBCT chain auditor.</strong></p>
+<p align="center">
+  burling validates Invocation-Bound Capability Tokens and identity documents against <br>
+  every mechanically-checkable normative requirement in <code>draft-prakash-aip-00</code>.
+</p>
+<p align="center">
+  <a href="#status">Status</a> ·
+  <a href="#worked-example">Worked Example</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#install">Install</a> ·
+  <a href="docs/CONFORMANCE.md">Conformance</a> ·
+  <a href="docs/spec-ambiguities.md">Ambiguities</a>
+</p>
 
-burling is an open-source conformance validator for the Agent Identity Protocol (`draft-prakash-aip-00`). It validates Invocation-Bound Capability Tokens (IBCTs) and identity documents against every mechanically-checkable normative requirement in the AIP draft.
+---
 
 The name follows the [goweft](https://github.com/goweft) textile convention: *burling* is the process of inspecting finished cloth for defects and removing them. burling inspects finished IBCTs for protocol defects.
 
-## Status
+<h2 id="status">Status</h2>
 
 **v0.1 — internal milestone.** 18 of 43 conformance checks are fully implemented; the remaining 25 are stubbed and return an INFO finding noting deferral to v0.2. This is the first end-to-end conformance run against synthetic fixtures — not a public release. See `docs/MILESTONE-v0.1.md` for scope, and `docs/CONFORMANCE.md` for per-check status.
 
@@ -21,7 +34,22 @@ The name follows the [goweft](https://github.com/goweft) textile convention: *bu
 | Completion Blocks | §3.6 | 4 | stub (v0.2) |
 | MCP Binding | §4.1 | 3 | stub (v0.2) |
 
-## Install
+<h2 id="architecture">Architecture</h2>
+
+<p align="center"><img src="docs/assets/architecture.svg" alt="burling validation pipeline" width="95%"></p>
+
+Four CLI commands feed a single dispatch layer in `cmd/burling`. Dispatch routes input to one of the validation modules under `internal/`. Each module emits `report.Finding` values which the CLI aggregates into a `report.Report` and renders as text or JSON. Identity and compact share the `Resolver` interface — `MapResolver` injected in tests, `HTTPResolver` in production for well-known URL lookups.
+
+Packages, all under `github.com/goweft/burling/`:
+
+- `internal/report` — finding type, severity enum, stable JSON schema
+- `internal/identity` — §2.3 validator (ID-01..ID-09) plus a zero-dep JCS canonicalizer
+- `internal/compact` — §3.1 JWT/Ed25519 validator (CM-01..CM-09); reuses `identity.Resolver`
+- `internal/{chained,scope,depth,delegation,completion,mcpbind}` — v0.1 stubs, each emits one INFO finding
+- `cmd/burling` — CLI front-end
+- `testdata/gen` — fixture generator for the `testdata/example/` directory
+
+<h2 id="install">Install</h2>
 
 ```
 go install github.com/goweft/burling/cmd/burling@latest
@@ -53,7 +81,7 @@ Exit codes:
 - `1` — at least one ERROR (or WARNING under `--strict`)
 - `2` — CLI usage or I/O error
 
-## Worked example
+<h2 id="worked-example">Worked example</h2>
 
 The repository includes committed fixtures under `testdata/example/` for experimenting with the CLI. They can be regenerated at any time with `go run ./testdata/gen -outdir testdata/example`.
 
@@ -105,15 +133,6 @@ $ burling lint --format json testdata/example/token.jwt | jq '.findings[] | {che
 ...
 ```
 
-## Architecture
-
-- `internal/report` — stable JSON finding schema consumed by all modules
-- `internal/identity` — §2.3 identity-document validator (ID-01..ID-09) + zero-dep JCS canonicalizer
-- `internal/compact` — §3.1 JWT/Ed25519 validator (CM-01..CM-09), reuses `identity.Resolver` for `kid` lookup
-- `internal/{chained,scope,depth,delegation,completion,mcpbind}` — v0.1 stubs; each emits one INFO finding
-- `cmd/burling` — CLI front-end
-- `testdata/gen` — fixture generator for the `testdata/example/` directory
-
 ## Design principles
 
 - **Zero third-party dependencies** on the standard path. Biscuit for chained mode is the single deferred exception.
@@ -134,10 +153,21 @@ burling tracks `draft-prakash-aip-00`. The draft is expected to evolve; burling 
 
 The project exists as a wedge into the AIP ecosystem: an independent conformance harness is concrete value to protocol implementers regardless of which runtimes adopt AIP, and its careful line-by-line reading of the draft surfaces ambiguities worth resolving upstream.
 
+## The WEFT ecosystem
+
+burling is the conformance layer. The rest of the stack:
+
+| Project | Language | What it does |
+|---|---|---|
+| **[heddle](https://github.com/goweft/heddle)** | Python | The policy-and-trust layer for MCP tool servers. Downstream integration target for AIP. |
+| **[cas](https://github.com/goweft/cas)** | Go | Conversational Agent Shell — terminal TUI where conversation generates workspaces. |
+| **[ratine](https://github.com/goweft/ratine)** | Python | Agent memory poisoning detector. |
+| **[crocking](https://github.com/goweft/crocking)** | Python | AI authorship detector for git repositories. |
+
 ## Status of outreach
 
 The spec author has been notified that this project exists and that the five initial ambiguities documented in `docs/spec-ambiguities.md` have been flagged for upstream discussion.
 
 ## License
 
-Apache 2.0. Matches the rest of the [goweft](https://github.com/goweft) stack (`cas`, `heddle`, `ratine`, `crocking`).
+Apache 2.0. Matches the rest of the [goweft](https://github.com/goweft) stack.
