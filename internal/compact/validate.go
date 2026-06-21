@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/ed25519"
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 
@@ -15,14 +14,14 @@ import (
 // Check IDs from docs/conformance-matrix.md §2.
 const (
 	CheckCM01 = "CM-01" // alg is EdDSA
-	CheckCM02 = "CM-02" // typ is aip-ibct+jwt
+	CheckCM02 = "CM-02" // typ is aip+jwt
 	CheckCM03 = "CM-03" // kid references a key in issuer's identity document
 	CheckCM04 = "CM-04" // signature verifies
 	CheckCM05 = "CM-05" // required claims present
 	CheckCM06 = "CM-06" // exp in the future
-	CheckCM07 = "CM-07" // nbf in the past
-	CheckCM08 = "CM-08" // ttl does not exceed cap
-	CheckCM09 = "CM-09" // jti is a valid UUIDv4 or ULID
+	CheckCM07 = "CM-07" // iat in the past
+	CheckCM08 = "CM-08" // ttl (exp - iat) does not exceed cap
+	CheckCM09 = "CM-09" // budget_usd is non-negative
 )
 
 const specRef = "§3.1"
@@ -37,7 +36,7 @@ const (
 	ProfileSensitive Profile = "sensitive"
 )
 
-// ttlCap returns the maximum allowed (exp - nbf) for the profile.
+// ttlCap returns the maximum allowed (exp - iat) for the profile.
 func (p Profile) ttlCap() time.Duration {
 	if p == ProfileSensitive {
 		return 15 * time.Minute
@@ -47,7 +46,7 @@ func (p Profile) ttlCap() time.Duration {
 
 // Options configures Validate.
 type Options struct {
-	// Now returns the "current time" used for exp/nbf checks.
+	// Now returns the "current time" used for exp/iat checks.
 	Now func() time.Time
 
 	// Resolver is used for CM-03 and CM-04 to fetch the issuer's
@@ -62,21 +61,12 @@ type Options struct {
 	Profile Profile
 }
 
-// requiredClaims per §3.1. Iteration order doesn't matter for
-// correctness; tests compare against the set.
+// requiredClaims per §3.1: the seven claims a compact IBCT MUST carry.
+// Iteration order doesn't matter for correctness; tests compare against
+// the set.
 var requiredClaims = []string{
-	"iss", "sub", "aud", "exp", "nbf", "jti", "scope", "invocation",
+	"iss", "sub", "scope", "budget_usd", "max_depth", "iat", "exp",
 }
-
-// uuidV4Pattern matches the canonical UUIDv4 form. The 13th hex digit
-// must be 4, and the 17th must be one of 8/9/a/b (clock_seq_hi_and_reserved
-// variant bits).
-var uuidV4Pattern = regexp.MustCompile(
-	`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$`,
-)
-
-// ulidPattern: 26 characters of Crockford base32 (0-9, A-Z minus ILOU).
-var ulidPattern = regexp.MustCompile(`^[0-9A-HJKMNP-TV-Z]{26}$`)
 
 // Validate runs all nine compact-mode checks against tok and returns
 // the accumulated report. Checks are dispatched in matrix order.
@@ -137,13 +127,13 @@ func checkCM01(r *report.Report, tok *Token) {
 		map[string]any{"actual": tok.Header.Alg})
 }
 
-// CM-02: typ is aip-ibct+jwt (ERROR)
+// CM-02: typ is aip+jwt (ERROR)
 func checkCM02(r *report.Report, tok *Token) {
-	if tok.Header.Typ == "aip-ibct+jwt" {
+	if tok.Header.Typ == "aip+jwt" {
 		return
 	}
 	add(r, CheckCM02, report.SeverityError,
-		fmt.Sprintf("expected typ %q, got %q", "aip-ibct+jwt", tok.Header.Typ),
+		fmt.Sprintf("expected typ %q, got %q", "aip+jwt", tok.Header.Typ),
 		map[string]any{"actual": tok.Header.Typ})
 }
 
@@ -265,31 +255,32 @@ func checkCM06(r *report.Report, tok *Token, now time.Time) {
 		map[string]any{"exp": exp.Format(time.RFC3339), "now": now.Format(time.RFC3339)})
 }
 
-// CM-07: nbf is in the past (ERROR)
+// CM-07: iat is in the past (ERROR)
 //
-// The boundary case (nbf == now) is treated as "valid right now" per
-// the RFC 7519 "not before" reading; only strictly-future nbf fails.
+// A token issued in the future is invalid. The boundary case
+// (iat == now) is treated as valid right now; only a strictly-future
+// iat fails.
 func checkCM07(r *report.Report, tok *Token, now time.Time) {
-	if tok.Payload.NotBefore == 0 {
+	if tok.Payload.IssuedAt == 0 {
 		return // CM-05 covers absence
 	}
-	nbf := time.Unix(tok.Payload.NotBefore, 0).UTC()
-	if !nbf.After(now) {
+	iat := time.Unix(tok.Payload.IssuedAt, 0).UTC()
+	if !iat.After(now) {
 		return
 	}
 	add(r, CheckCM07, report.SeverityError,
-		fmt.Sprintf("token not yet valid; nbf=%s now=%s", nbf.Format(time.RFC3339), now.Format(time.RFC3339)),
-		map[string]any{"nbf": nbf.Format(time.RFC3339), "now": now.Format(time.RFC3339)})
+		fmt.Sprintf("token issued in the future; iat=%s now=%s", iat.Format(time.RFC3339), now.Format(time.RFC3339)),
+		map[string]any{"iat": iat.Format(time.RFC3339), "now": now.Format(time.RFC3339)})
 }
 
-// CM-08: exp - nbf does not exceed the profile's TTL cap (WARNING)
+// CM-08: exp - iat does not exceed the profile's TTL cap (WARNING)
 func checkCM08(r *report.Report, tok *Token, profile Profile) {
-	if tok.Payload.Expiry == 0 || tok.Payload.NotBefore == 0 {
+	if tok.Payload.Expiry == 0 || tok.Payload.IssuedAt == 0 {
 		return // CM-05 covers absence; CM-06/07 cover ordering
 	}
 	exp := time.Unix(tok.Payload.Expiry, 0).UTC()
-	nbf := time.Unix(tok.Payload.NotBefore, 0).UTC()
-	ttl := exp.Sub(nbf)
+	iat := time.Unix(tok.Payload.IssuedAt, 0).UTC()
+	ttl := exp.Sub(iat)
 	capDur := profile.ttlCap()
 	if ttl <= capDur {
 		return
@@ -303,20 +294,18 @@ func checkCM08(r *report.Report, tok *Token, profile Profile) {
 		})
 }
 
-// CM-09: jti is a valid UUIDv4 or ULID (WARNING)
+// CM-09: budget_usd is non-negative (ERROR)
+//
+// Per §3.5, the verifier checks that the authorization budget is
+// non-negative. A negative ceiling is malformed. Absence is CM-05's
+// concern; a present budget of zero is permitted — it authorizes no
+// spend, which is a coherent (if restrictive) grant.
 func checkCM09(r *report.Report, tok *Token) {
-	if tok.Payload.JTI == "" {
-		return // CM-05 covers absence
+	if tok.Payload.BudgetUSD < 0 {
+		add(r, CheckCM09, report.SeverityError,
+			fmt.Sprintf("budget_usd is negative: %v", tok.Payload.BudgetUSD),
+			map[string]any{"budget_usd": tok.Payload.BudgetUSD})
 	}
-	if uuidV4Pattern.MatchString(tok.Payload.JTI) {
-		return
-	}
-	if ulidPattern.MatchString(tok.Payload.JTI) {
-		return
-	}
-	add(r, CheckCM09, report.SeverityWarning,
-		fmt.Sprintf("jti %q is neither a UUIDv4 nor a ULID", tok.Payload.JTI),
-		map[string]any{"jti": tok.Payload.JTI})
 }
 
 // payloadContains is a small helper used by tests to check whether a

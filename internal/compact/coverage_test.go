@@ -124,7 +124,7 @@ func TestValidate_DefaultNowAndProfile(t *testing.T) {
 	}
 }
 
-// mintTokenLive builds a compact IBCT whose exp/nbf windows are
+// mintTokenLive builds a compact IBCT whose iat/exp windows are
 // anchored at the given reference time. Used by tests that run
 // Validate without a fixed Now.
 func mintTokenLive(t *testing.T, ref time.Time) (string, *identity.MapResolver, *identity.Document) {
@@ -166,16 +166,15 @@ func mintTokenLive(t *testing.T, ref time.Time) (string, *identity.MapResolver, 
 	}
 	resolver := identity.NewMapResolver(issDoc)
 
-	header := map[string]any{"alg": "EdDSA", "typ": "aip-ibct+jwt", "kid": "k1"}
+	header := map[string]any{"alg": "EdDSA", "typ": "aip+jwt", "kid": "k1"}
 	payload := map[string]any{
 		"iss":        iss,
 		"sub":        "aip:web:example.com/agent-live",
-		"aud":        []string{"aip:web:example.com/mcp"},
-		"exp":        ref.Add(30 * time.Minute).Unix(),
-		"nbf":        ref.Add(-1 * time.Minute).Unix(),
-		"jti":        "01HZ5N8Q3R4TV6W7X8Y9Z0ABCD",
 		"scope":      map[string]any{"tools": []string{"search"}},
-		"invocation": map[string]any{"session_id": "sess-live"},
+		"budget_usd": 5.0,
+		"max_depth":  0,
+		"iat":        ref.Add(-1 * time.Minute).Unix(),
+		"exp":        ref.Add(30 * time.Minute).Unix(),
 	}
 	hdrJSON, _ := json.Marshal(header)
 	plJSON, _ := json.Marshal(payload)
@@ -186,30 +185,17 @@ func mintTokenLive(t *testing.T, ref time.Time) (string, *identity.MapResolver, 
 	return signingInput + "." + base64.RawURLEncoding.EncodeToString(sig), resolver, issDoc
 }
 
-// --- CM-09 UUIDv4 variant bit edge case ---
+// --- CM-07 boundary: iat exactly now ---
 
-func TestValidate_CM09_WrongVariantBit(t *testing.T) {
+func TestValidate_CM07_IATExactlyNow(t *testing.T) {
 	raw, resolver, _ := mintToken(t, nil, func(p map[string]any) {
-		p["jti"] = "550e8400-e29b-41d4-c716-446655440000"
-	})
-	tok := parseOK(t, raw)
-	r := Validate(context.Background(), tok, Options{Now: fixedNow, Resolver: resolver})
-	if !hasFinding(r, CheckCM09, report.SeverityWarning) {
-		t.Errorf("expected CM-09 WARNING for invalid variant bit; got %+v", r.Findings)
-	}
-}
-
-// --- CM-06/07 boundary: exact-now ---
-
-func TestValidate_CM07_NBFExactlyNow(t *testing.T) {
-	raw, resolver, _ := mintToken(t, nil, func(p map[string]any) {
-		p["nbf"] = fixedNow().Unix()
+		p["iat"] = fixedNow().Unix()
 		p["exp"] = fixedNow().Add(30 * time.Minute).Unix()
 	})
 	tok := parseOK(t, raw)
 	r := Validate(context.Background(), tok, Options{Now: fixedNow, Resolver: resolver})
 	if hasFinding(r, CheckCM07, report.SeverityError) {
-		t.Errorf("CM-07 should allow nbf==now; got %+v", r.Findings)
+		t.Errorf("CM-07 should allow iat==now; got %+v", r.Findings)
 	}
 }
 

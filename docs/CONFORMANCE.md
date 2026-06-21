@@ -34,14 +34,14 @@ status in the burling validator. Updated as work lands.
 | ID | Check | Severity | Status |
 |----|-------|----------|--------|
 | CM-01 | JWS header `alg` is `EdDSA` | ERROR | LIVE |
-| CM-02 | JWS header `typ` is `aip-ibct+jwt` | ERROR | LIVE |
+| CM-02 | JWS header `typ` is `aip+jwt` | ERROR | LIVE |
 | CM-03 | JWS header `kid` references a key in issuer's identity document | ERROR | LIVE |
 | CM-04 | Signature verifies against resolved public key | ERROR | LIVE |
-| CM-05 | Required claims present: `iss`, `sub`, `aud`, `exp`, `nbf`, `jti`, `scope`, `invocation` | ERROR | LIVE |
+| CM-05 | Required claims present: `iss`, `sub`, `scope`, `budget_usd`, `max_depth`, `iat`, `exp` | ERROR | LIVE |
 | CM-06 | `exp` is in the future | ERROR | LIVE |
-| CM-07 | `nbf` is in the past | ERROR | LIVE |
-| CM-08 | `exp - nbf` does not exceed max TTL (1h standard, 15m sensitive) | WARNING | LIVE |
-| CM-09 | `jti` is a valid UUIDv4 or ULID | WARNING | LIVE |
+| CM-07 | `iat` is in the past (token not issued in the future) | ERROR | LIVE |
+| CM-08 | `exp - iat` does not exceed max TTL (1h standard, 15m sensitive) | WARNING | LIVE |
+| CM-09 | `budget_usd` is non-negative (§3.5) | ERROR | LIVE |
 
 ## §3.2 — Chained Mode — Biscuit (`internal/chained`)
 

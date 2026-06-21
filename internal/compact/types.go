@@ -1,9 +1,9 @@
 // Package compact implements AIP §3.1 compact-mode IBCT validation.
 //
 // Compact mode tokens are JWTs signed with Ed25519 (alg=EdDSA) carrying
-// the AIP-specific typ "aip-ibct+jwt" and a fixed claim set. The nine
-// checks CM-01..CM-09 from docs/conformance-matrix.md are dispatched
-// by Validate.
+// the AIP-specific typ "aip+jwt" and a fixed claim set. The nine checks
+// CM-01..CM-09 from docs/conformance-matrix.md are dispatched by
+// Validate.
 //
 // CM-03 and CM-04 resolve the issuer's identity document to locate the
 // signing key. The Resolver is the same interface used by the identity
@@ -43,22 +43,21 @@ type Header struct {
 	KID string `json:"kid"`
 }
 
-// Payload is the IBCT claim set per §3.1.
+// Payload is the IBCT claim set per §3.1. The seven REQUIRED claims are
+// iss, sub, scope, budget_usd, max_depth, iat, and exp.
 //
-// Time claims (exp, nbf) are unix seconds per RFC 7519. Scope and
-// Invocation are kept as raw JSON so the compact package doesn't
-// need to know their internal shape — that's scope-attenuation's job
-// in v0.2. Claims whose presence CM-05 checks but whose content
-// burling doesn't inspect live in Raw.
+// Time claims (iat, exp) are unix seconds per RFC 7519. Scope is kept
+// as raw JSON so the compact package doesn't need to know its internal
+// shape — that's scope-attenuation's job in v0.2. Claims whose presence
+// CM-05 checks but whose value burling doesn't inspect (e.g. max_depth)
+// live only in Raw.
 type Payload struct {
-	Issuer     string          `json:"iss"`
-	Subject    string          `json:"sub"`
-	Audience   json.RawMessage `json:"aud"`
-	Expiry     int64           `json:"exp"`
-	NotBefore  int64           `json:"nbf"`
-	JTI        string          `json:"jti"`
-	Scope      json.RawMessage `json:"scope"`
-	Invocation json.RawMessage `json:"invocation"`
+	Issuer    string          `json:"iss"`
+	Subject   string          `json:"sub"`
+	Scope     json.RawMessage `json:"scope"`
+	BudgetUSD float64         `json:"budget_usd"`
+	IssuedAt  int64           `json:"iat"`
+	Expiry    int64           `json:"exp"`
 
 	// Raw holds every top-level field as raw JSON, including fields
 	// not modeled above. CM-05 iterates Raw to check required-claim

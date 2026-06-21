@@ -32,14 +32,14 @@ Severity rules:
 | ID | Check | Severity |
 |----|-------|----------|
 | CM-01 | JWS header `alg` is `EdDSA` | ERROR |
-| CM-02 | JWS header `typ` is `aip-ibct+jwt` | ERROR |
+| CM-02 | JWS header `typ` is `aip+jwt` | ERROR |
 | CM-03 | JWS header `kid` references a key in issuer's identity document | ERROR |
 | CM-04 | Signature verifies against resolved public key | ERROR |
-| CM-05 | Required claims present: `iss`, `sub`, `aud`, `exp`, `nbf`, `jti`, `scope`, `invocation` | ERROR |
+| CM-05 | Required claims present: `iss`, `sub`, `scope`, `budget_usd`, `max_depth`, `iat`, `exp` | ERROR |
 | CM-06 | `exp` is in the future | ERROR |
-| CM-07 | `nbf` is in the past | ERROR |
-| CM-08 | `exp - nbf` does not exceed max TTL (1h standard, 15m sensitive) | WARNING |
-| CM-09 | `jti` is a valid UUIDv4 or ULID | WARNING |
+| CM-07 | `iat` is in the past (token not issued in the future) | ERROR |
+| CM-08 | `exp - iat` does not exceed max TTL (1h standard, 15m sensitive) | WARNING |
+| CM-09 | `budget_usd` is non-negative (§3.5) | ERROR |
 
 ## 3. Chained Mode — Biscuit (§3.2)
 

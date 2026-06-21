@@ -50,22 +50,23 @@ func mintToken(
 
 	header := map[string]any{
 		"alg": "EdDSA",
-		"typ": "aip-ibct+jwt",
+		"typ": "aip+jwt",
 		"kid": "k1",
 	}
 	if mutateHeader != nil {
 		mutateHeader(header)
 	}
 
+	// The seven §3.1 required claims. Default TTL (exp - iat) is 31m:
+	// under the 1h standard cap, over the 15m sensitive cap.
 	payload := map[string]any{
 		"iss":        iss,
 		"sub":        "aip:web:example.com/agent-bob",
-		"aud":        []string{"aip:web:example.com/mcp-server"},
-		"exp":        now.Add(30 * time.Minute).Unix(),
-		"nbf":        now.Add(-1 * time.Minute).Unix(),
-		"jti":        "01HZ5N8Q3R4TV6W7X8Y9Z0ABCD", // valid ULID shape
 		"scope":      map[string]any{"tools": []string{"search"}},
-		"invocation": map[string]any{"session_id": "sess-1"},
+		"budget_usd": 5.0,
+		"max_depth":  0,
+		"iat":        now.Add(-1 * time.Minute).Unix(),
+		"exp":        now.Add(30 * time.Minute).Unix(),
 	}
 	if mutatePayload != nil {
 		mutatePayload(payload)
@@ -241,7 +242,7 @@ func TestValidate_CM04_TamperedPayload(t *testing.T) {
 }
 
 func TestValidate_CM05_MissingClaim(t *testing.T) {
-	cases := []string{"iss", "sub", "aud", "exp", "nbf", "jti", "scope", "invocation"}
+	cases := []string{"iss", "sub", "scope", "budget_usd", "max_depth", "iat", "exp"}
 	for _, claim := range cases {
 		t.Run("missing_"+claim, func(t *testing.T) {
 			raw, resolver, _ := mintToken(t, nil, func(p map[string]any) {
@@ -259,7 +260,7 @@ func TestValidate_CM05_MissingClaim(t *testing.T) {
 func TestValidate_CM06_Expired(t *testing.T) {
 	raw, resolver, _ := mintToken(t, nil, func(p map[string]any) {
 		p["exp"] = fixedNow().Add(-1 * time.Hour).Unix()
-		p["nbf"] = fixedNow().Add(-2 * time.Hour).Unix()
+		p["iat"] = fixedNow().Add(-2 * time.Hour).Unix()
 	})
 	tok := parseOK(t, raw)
 	r := Validate(context.Background(), tok, Options{Now: fixedNow, Resolver: resolver})
@@ -268,9 +269,9 @@ func TestValidate_CM06_Expired(t *testing.T) {
 	}
 }
 
-func TestValidate_CM07_NotYetValid(t *testing.T) {
+func TestValidate_CM07_IssuedInFuture(t *testing.T) {
 	raw, resolver, _ := mintToken(t, nil, func(p map[string]any) {
-		p["nbf"] = fixedNow().Add(1 * time.Hour).Unix()
+		p["iat"] = fixedNow().Add(1 * time.Hour).Unix()
 		p["exp"] = fixedNow().Add(2 * time.Hour).Unix()
 	})
 	tok := parseOK(t, raw)
@@ -282,7 +283,7 @@ func TestValidate_CM07_NotYetValid(t *testing.T) {
 
 func TestValidate_CM08_TTLExceeded_Standard(t *testing.T) {
 	raw, resolver, _ := mintToken(t, nil, func(p map[string]any) {
-		p["nbf"] = fixedNow().Add(-1 * time.Minute).Unix()
+		p["iat"] = fixedNow().Add(-1 * time.Minute).Unix()
 		p["exp"] = fixedNow().Add(2 * time.Hour).Unix() // 2h01m > 1h cap
 	})
 	tok := parseOK(t, raw)
@@ -293,8 +294,8 @@ func TestValidate_CM08_TTLExceeded_Standard(t *testing.T) {
 }
 
 func TestValidate_CM08_TTLExceeded_Sensitive(t *testing.T) {
-	// 30-minute TTL is fine under standard but exceeds sensitive's 15m cap.
-	raw, resolver, _ := mintToken(t, nil, nil) // default 30m TTL
+	// 31-minute TTL is fine under standard but exceeds sensitive's 15m cap.
+	raw, resolver, _ := mintToken(t, nil, nil) // default 31m TTL
 	tok := parseOK(t, raw)
 	r := Validate(context.Background(), tok, Options{
 		Now: fixedNow, Resolver: resolver, Profile: ProfileSensitive,
@@ -304,25 +305,25 @@ func TestValidate_CM08_TTLExceeded_Sensitive(t *testing.T) {
 	}
 }
 
-func TestValidate_CM09_ValidUUIDv4(t *testing.T) {
+func TestValidate_CM09_NegativeBudget(t *testing.T) {
 	raw, resolver, _ := mintToken(t, nil, func(p map[string]any) {
-		p["jti"] = "550e8400-e29b-41d4-a716-446655440000"
+		p["budget_usd"] = -1.0
 	})
 	tok := parseOK(t, raw)
 	r := Validate(context.Background(), tok, Options{Now: fixedNow, Resolver: resolver})
-	if hasFinding(r, CheckCM09, report.SeverityWarning) {
-		t.Errorf("CM-09 should accept UUIDv4; got %+v", r.Findings)
+	if !hasFinding(r, CheckCM09, report.SeverityError) {
+		t.Errorf("expected CM-09 ERROR for negative budget; got %+v", r.Findings)
 	}
 }
 
-func TestValidate_CM09_InvalidJTI(t *testing.T) {
+func TestValidate_CM09_ZeroBudgetOK(t *testing.T) {
 	raw, resolver, _ := mintToken(t, nil, func(p map[string]any) {
-		p["jti"] = "not-a-uuid-or-ulid"
+		p["budget_usd"] = 0.0
 	})
 	tok := parseOK(t, raw)
 	r := Validate(context.Background(), tok, Options{Now: fixedNow, Resolver: resolver})
-	if !hasFinding(r, CheckCM09, report.SeverityWarning) {
-		t.Errorf("expected CM-09 WARNING; got %+v", r.Findings)
+	if hasFinding(r, CheckCM09, report.SeverityError) {
+		t.Errorf("CM-09 should accept a zero budget; got %+v", r.Findings)
 	}
 }
 
