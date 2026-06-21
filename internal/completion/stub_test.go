@@ -15,6 +15,9 @@ func TestValidate_EmitsSingleInfo(t *testing.T) {
 	if r.Findings[0].Severity != report.SeverityInfo {
 		t.Errorf("severity = %v, want INFO", r.Findings[0].Severity)
 	}
+	if got := r.Findings[0].SpecRef; got != "§6.1" {
+		t.Errorf("SpecRef = %q, want §6.1", got)
+	}
 	if r.HasErrors() {
 		t.Error("stub should not produce errors")
 	}

@@ -1,4 +1,4 @@
-// Package delegation is a v0.1 stub for AIP §3.5 delegation-context
+// Package delegation is a v0.1 stub for AIP §5.2 delegation-context
 // checks (DC-01..DC-04: delegation_reason, on_behalf_of, budget
 // coherence). Deferred to v0.2 — these fields live on chain blocks,
 // meaningful only once chained mode is supported.
@@ -19,7 +19,7 @@ func Validate(_ context.Context) *report.Report {
 	return &report.Report{
 		Findings: []report.Finding{{
 			CheckID:  "DC-00",
-			SpecRef:  "§3.5",
+			SpecRef:  "§5.2",
 			Severity: report.SeverityInfo,
 			Message:  DeferredMessage,
 			Context:  map[string]any{"checks_deferred": []string{"DC-01", "DC-02", "DC-03", "DC-04"}},

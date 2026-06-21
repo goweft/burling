@@ -18,9 +18,9 @@ import (
 // compact token and also reporting "chained-mode deferred" findings
 // would be noisy.
 //
-// Order matches docs/conformance-matrix.md so lint output reads in
-// section order: §3.3 scope, §3.4 depth, §3.5 delegation, §3.6
-// completion, §4.1 mcpbind.
+// Order matches docs/conformance-matrix.md (matrix module order, which
+// is not strictly ascending by section): §3.3 scope, §5.1 depth,
+// §5.2 delegation, §6.1 completion, §4.1 mcpbind.
 var deferredValidators = []func(context.Context) *report.Report{
 	scope.Validate,
 	depth.Validate,

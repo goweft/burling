@@ -71,7 +71,7 @@ Scope attenuation is the highest-priority security property of the
 protocol. It's stubbed in v0.1 because it operates on chains of
 blocks, which are meaningful only once chained mode is supported.
 
-## §3.4 — Bounded Delegation Depth (`internal/depth`)
+## §5.1 — Bounded Delegation Depth (`internal/depth`)
 
 | ID | Check | Severity | Status |
 |----|-------|----------|--------|
@@ -79,7 +79,7 @@ blocks, which are meaningful only once chained mode is supported.
 | BD-02 | Each block declares its depth consistently | ERROR | STUB (v0.2) |
 | BD-03 | Depth is monotonic (each child = parent + 1) | ERROR | STUB (v0.2) |
 
-## §3.5 — Delegation Context (`internal/delegation`)
+## §5.2 — Delegation Context (`internal/delegation`)
 
 | ID | Check | Severity | Status |
 |----|-------|----------|--------|
@@ -88,7 +88,7 @@ blocks, which are meaningful only once chained mode is supported.
 | DC-03 | `on_behalf_of` field present and resolves to a valid identity | ERROR | STUB (v0.2) |
 | DC-04 | Budget ceilings declared when present are numerically coherent | ERROR | STUB (v0.2) |
 
-## §3.6 — Completion Blocks (`internal/completion`)
+## §6.1 — Completion Blocks (`internal/completion`)
 
 | ID | Check | Severity | Status |
 |----|-------|----------|--------|
@@ -115,9 +115,9 @@ blocks, which are meaningful only once chained mode is supported.
 | Compact | §3.1 | 9 | 0 | 9 |
 | Chained | §3.2 | 0 | 5 | 5 |
 | Scope | §3.3 | 0 | 6 | 6 |
-| Depth | §3.4 | 0 | 3 | 3 |
-| Delegation | §3.5 | 0 | 4 | 4 |
-| Completion | §3.6 | 0 | 4 | 4 |
+| Depth | §5.1 | 0 | 3 | 3 |
+| Delegation | §5.2 | 0 | 4 | 4 |
+| Completion | §6.1 | 0 | 4 | 4 |
 | MCP Binding | §4.1 | 0 | 3 | 3 |
 | **Total** | | **18** | **25** | **43** |
 

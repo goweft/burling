@@ -36,11 +36,11 @@ The spec defines three policy profiles (Simple, Standard, Advanced) with differe
 
 ---
 
-## ambiguity-04 — Completion block ordering (§3.6)
+## ambiguity-04 — Completion block ordering (§6.1)
 
 The spec says a completion block, if present, is "the final block" in a chain. CB-01 enforces this. But the spec does not explicitly state what should happen if an agent appends a delegation block after a completion block — is this an explicitly invalid token, or implementation-defined?
 
-**Question for Prakash:** Should burling treat a post-completion block as an ERROR (token is malformed and MUST be rejected), or as a WARNING (unusual but possibly intentional)? A clarifying sentence in §3.6 would resolve this for all implementers.
+**Question for Prakash:** Should burling treat a post-completion block as an ERROR (token is malformed and MUST be rejected), or as a WARNING (unusual but possibly intentional)? A clarifying sentence in §6.1 would resolve this for all implementers.
 
 **burling impact:** CB-04 will treat post-completion blocks as ERROR until clarified. Conservative default — easier to relax than tighten later.
 

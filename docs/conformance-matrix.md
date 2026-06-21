@@ -66,7 +66,7 @@ This is the core security property of the whole protocol. If burling does nothin
 | SA-05 | Scope attenuation holds transitively across all hops | ERROR |
 | SA-06 | No scope field introduces capabilities absent from parent | ERROR |
 
-## 5. Bounded Delegation Depth (§3.4)
+## 5. Bounded Delegation Depth (§5.1)
 
 | ID | Check | Severity |
 |----|-------|----------|
@@ -74,7 +74,7 @@ This is the core security property of the whole protocol. If burling does nothin
 | BD-02 | Each block declares its depth consistently | ERROR |
 | BD-03 | Depth is monotonic (each child = parent + 1) | ERROR |
 
-## 6. Delegation Context (§3.5)
+## 6. Delegation Context (§5.2)
 
 | ID | Check | Severity |
 |----|-------|----------|
@@ -83,7 +83,7 @@ This is the core security property of the whole protocol. If burling does nothin
 | DC-03 | `on_behalf_of` field present and resolves to a valid identity | ERROR |
 | DC-04 | Budget ceilings declared when present are numerically coherent (child ≤ parent) | ERROR |
 
-## 7. Completion Blocks (§3.6)
+## 7. Completion Blocks (§6.1)
 
 | ID | Check | Severity |
 |----|-------|----------|
