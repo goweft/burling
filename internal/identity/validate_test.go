@@ -20,13 +20,25 @@ func fixedNow() time.Time {
 
 // mintDoc builds a valid, signed identity document suitable for use as
 // a baseline in table-driven tests. Each caller gets a fresh keypair.
+// The 24h key-validity window is anchored at fixedNow(); use mintDocAt
+// when a test validates against the real wall clock.
 func mintDoc(t *testing.T, id string) (raw []byte, priv ed25519.PrivateKey, pub ed25519.PublicKey) {
+	t.Helper()
+	return mintDocAt(t, id, fixedNow())
+}
+
+// mintDocAt is mintDoc with an explicit anchor time for the key's
+// validity window (valid_from = ref-24h, valid_until = ref+24h). Tests
+// that run Validate with the default Now (real time.Now) mint with
+// ref=time.Now() so the window covers the moment of validation rather
+// than the fixedNow() epoch.
+func mintDocAt(t *testing.T, id string, ref time.Time) (raw []byte, priv ed25519.PrivateKey, pub ed25519.PublicKey) {
 	t.Helper()
 	pub, priv, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		t.Fatalf("generate key: %v", err)
 	}
-	now := fixedNow()
+	now := ref
 	tree := map[string]any{
 		"aip": "1.0",
 		"id":  id,

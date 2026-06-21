@@ -399,8 +399,9 @@ func TestValidate_NilDocument(t *testing.T) {
 
 func TestValidate_DefaultNow(t *testing.T) {
 	// Passing Options{} (Now=nil) should not panic; it should use
-	// time.Now and, for a freshly minted doc with 24h validity, pass.
-	raw, _, _ := mintDoc(t, "aip:web:example.com/a")
+	// time.Now. Mint with a live-anchored 24h window so the doc is
+	// valid at the real moment of validation, not the fixedNow epoch.
+	raw, _, _ := mintDocAt(t, "aip:web:example.com/a", time.Now())
 	doc := reparse(t, raw)
 	r := Validate(context.Background(), doc, Options{}) // Now=nil
 	if r.HasErrors() {
