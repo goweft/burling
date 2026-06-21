@@ -25,7 +25,7 @@ type commonFlags struct {
 
 func registerCommonFlags(fs *flag.FlagSet, defaultFormat string) *commonFlags {
 	cf := &commonFlags{}
-	fs.StringVar(&cf.format, "format", defaultFormat, "output format: text or json")
+	fs.StringVar(&cf.format, "format", defaultFormat, "output format: text, json, or sarif")
 	fs.BoolVar(&cf.strict, "strict", false, "promote WARNING to failing exit code")
 	return cf
 }
@@ -40,7 +40,7 @@ func cmdValidate(ctx context.Context, args []string, stdout, stderr *os.File) in
 	}
 	rest := fs.Args()
 	if len(rest) != 1 {
-		fmt.Fprintln(stderr, "usage: burling validate [--format text|json] [--strict] <token-file>")
+		fmt.Fprintln(stderr, "usage: burling validate [--format text|json|sarif] [--strict] <token-file>")
 		return 2
 	}
 	raw, err := readTokenFile(rest[0])
@@ -77,7 +77,7 @@ func cmdValidateIdentity(ctx context.Context, args []string, stdout, stderr *os.
 	}
 	rest := fs.Args()
 	if len(rest) != 1 {
-		fmt.Fprintln(stderr, "usage: burling validate-identity [--format text|json] [--strict] <url|file>")
+		fmt.Fprintln(stderr, "usage: burling validate-identity [--format text|json|sarif] [--strict] <url|file>")
 		return 2
 	}
 	arg := rest[0]
@@ -126,7 +126,7 @@ func cmdLint(ctx context.Context, args []string, stdout, stderr *os.File) int {
 	}
 	rest := fs.Args()
 	if len(rest) != 1 {
-		fmt.Fprintln(stderr, "usage: burling lint [--format text|json] [--strict] <token-file>")
+		fmt.Fprintln(stderr, "usage: burling lint [--format text|json|sarif] [--strict] <token-file>")
 		return 2
 	}
 	raw, err := readTokenFile(rest[0])
@@ -165,7 +165,7 @@ func cmdAuditChain(ctx context.Context, args []string, stdout, stderr *os.File) 
 	}
 	rest := fs.Args()
 	if len(rest) != 1 {
-		fmt.Fprintln(stderr, "usage: burling audit-chain [--format text|json] [--strict] <token-file>")
+		fmt.Fprintln(stderr, "usage: burling audit-chain [--format text|json|sarif] [--strict] <token-file>")
 		return 2
 	}
 	// File is not read in v0.1 — audit-chain dispatches to the stub

@@ -11,9 +11,9 @@
 //
 // Shared flags apply to every subcommand:
 //
-//	--format text|json   output format (default: text for validate /
-//	                     validate-identity / audit-chain; json for lint)
-//	--strict             promote WARNING to failing exit code
+//	--format text|json|sarif   output format (default: text for validate /
+//	                           validate-identity / audit-chain; json for lint)
+//	--strict                   promote WARNING to failing exit code
 //
 // Exit codes: 0 on success, 1 on any ERROR finding (or WARNING if
 // --strict), 2 on CLI usage / I/O error.
@@ -80,9 +80,9 @@ Usage:
   burling audit-chain       <token-file>   Chained-mode audit (v0.1 stub)
 
 Shared flags:
-  --format text|json   Output format (default: text for validate /
-                       validate-identity / audit-chain; json for lint)
-  --strict             Promote WARNING to failing exit code
+  --format text|json|sarif   Output format (default: text for validate /
+                             validate-identity / audit-chain; json for lint)
+  --strict                   Promote WARNING to failing exit code
 
 Exit codes:
   0   all checks passed (no ERROR, and no WARNING under --strict)

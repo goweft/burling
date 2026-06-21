@@ -118,16 +118,15 @@ func mintSignedIdentity(t *testing.T, id string) (raw []byte, pub ed25519.Public
 func mintCompactToken(t *testing.T, iss, kid string, priv ed25519.PrivateKey) string {
 	t.Helper()
 	now := time.Now()
-	header := map[string]any{"alg": "EdDSA", "typ": "aip-ibct+jwt", "kid": kid}
+	header := map[string]any{"alg": "EdDSA", "typ": "aip+jwt", "kid": kid}
 	payload := map[string]any{
 		"iss":        iss,
 		"sub":        "aip:web:example.com/agent-cli-test",
-		"aud":        []string{"aip:web:example.com/mcp-cli-test"},
-		"exp":        now.Add(30 * time.Minute).Unix(),
-		"nbf":        now.Add(-1 * time.Minute).Unix(),
-		"jti":        "01HZ5N8Q3R4TV6W7X8Y9Z0ABCD",
 		"scope":      map[string]any{"tools": []string{"search"}},
-		"invocation": map[string]any{"session_id": "sess-cli"},
+		"budget_usd": 5.0,
+		"max_depth":  0,
+		"iat":        now.Add(-1 * time.Minute).Unix(),
+		"exp":        now.Add(30 * time.Minute).Unix(),
 	}
 	hdrJSON, _ := json.Marshal(header)
 	plJSON, _ := json.Marshal(payload)
@@ -457,5 +456,41 @@ func TestRenderText_SortsSeverityDescending(t *testing.T) {
 	}
 	if ii >= 0 && ii < ei {
 		t.Errorf("INFO appeared before ERROR; ordering wrong. stdout=%q", stdout)
+	}
+}
+
+// --- sarif format ---
+
+func TestCmdLint_SARIFFormat(t *testing.T) {
+	_, _, priv := mintSignedIdentity(t, "aip:web:nonexistent.invalid/agent")
+	tokStr := mintCompactToken(t, "aip:web:nonexistent.invalid/agent", "k1", priv)
+	path := writeTempToken(t, tokStr)
+
+	// lint aggregates findings; --format sarif overrides its JSON default.
+	// CM-03 fails on the unresolvable issuer, so exit is 1 — the point of
+	// this test is that the output is well-formed SARIF the upload action
+	// can consume.
+	exit, stdout, _ := runCaptured(t, "lint", "--format", "sarif", path)
+	if exit != 1 {
+		t.Errorf("exit = %d, want 1", exit)
+	}
+	var m map[string]any
+	if err := json.Unmarshal([]byte(stdout), &m); err != nil {
+		t.Fatalf("SARIF output is not valid JSON: %v\n%s", err, stdout)
+	}
+	if m["version"] != "2.1.0" {
+		t.Errorf("SARIF version = %v, want 2.1.0", m["version"])
+	}
+	runs, ok := m["runs"].([]any)
+	if !ok || len(runs) != 1 {
+		t.Fatalf("expected 1 run; got %v", m["runs"])
+	}
+	run := runs[0].(map[string]any)
+	driver := run["tool"].(map[string]any)["driver"].(map[string]any)
+	if driver["name"] != "burling" {
+		t.Errorf("driver.name = %v, want burling", driver["name"])
+	}
+	if len(run["results"].([]any)) == 0 {
+		t.Error("expected at least one SARIF result")
 	}
 }

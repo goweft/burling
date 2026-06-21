@@ -15,6 +15,7 @@ import (
 //
 // Format dispatch:
 //   - json: r.MarshalIndent output, newline terminated.
+//   - sarif: SARIF 2.1.0 for upload to GitHub code scanning.
 //   - text: a section per severity (ERROR/WARNING/INFO), one finding
 //     per line within each section, followed by a summary.
 //
@@ -26,10 +27,15 @@ func render(stdout, stderr *os.File, r *report.Report, cf *commonFlags) int {
 			fmt.Fprintf(stderr, "burling: render json: %v\n", err)
 			return 2
 		}
+	case "sarif":
+		if err := renderSARIF(stdout, r); err != nil {
+			fmt.Fprintf(stderr, "burling: render sarif: %v\n", err)
+			return 2
+		}
 	case "text", "":
 		renderText(stdout, r)
 	default:
-		fmt.Fprintf(stderr, "burling: unknown --format %q (want text or json)\n", cf.format)
+		fmt.Fprintf(stderr, "burling: unknown --format %q (want text, json, or sarif)\n", cf.format)
 		return 2
 	}
 	return r.ExitCode(cf.strict)
@@ -39,6 +45,19 @@ func renderJSON(w *os.File, r *report.Report) error {
 	enc := json.NewEncoder(w)
 	enc.SetIndent("", "  ")
 	return enc.Encode(r)
+}
+
+// renderSARIF writes the report as SARIF 2.1.0. The bytes are already
+// indented and newline-terminated by (*Report).SARIF, so this is a
+// straight write — the format exists so a CI step can pipe the output to
+// github/codeql-action/upload-sarif and surface findings in the PR.
+func renderSARIF(w *os.File, r *report.Report) error {
+	b, err := r.SARIF()
+	if err != nil {
+		return err
+	}
+	_, err = w.Write(b)
+	return err
 }
 
 // renderText emits a deliberately plain, grep-friendly format:
